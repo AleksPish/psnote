@@ -1,0 +1,117 @@
+# Name: get-freespace
+# Tags: windows
+# Saved: 2026-03-03T11:30:07.6506925+00:00
+function Get-FreeSpace {
+    [CmdletBinding()]
+    param(
+        [Parameter(ValueFromPipeline = $true, ValueFromPipelineByPropertyName = $true)]
+        [Alias("CN", "Server", "Name")]
+        [string[]]$ComputerName = @($env:COMPUTERNAME),
+
+        [Parameter()]
+        [ValidateRange(0, 100)]
+        [int]$BelowPercentFree
+    )
+
+    begin {
+        $allResults = @()
+    }
+
+    process {
+        foreach ($computer in $ComputerName) {
+            $isLocal = $computer -eq "." -or $computer -eq "localhost" -or $computer -eq $env:COMPUTERNAME
+            $allDisks = $null
+
+            try {
+                if ($isLocal) {
+                    $allDisks = Get-CimInstance -ClassName Win32_LogicalDisk -Filter "DriveType=3" -ErrorAction Stop
+                }
+                else {
+                    $allDisks = Get-CimInstance -ComputerName $computer -ClassName Win32_LogicalDisk -Filter "DriveType=3" -ErrorAction Stop
+                }
+            }
+            catch {
+                try {
+                    # Fallback for systems without WSMan/WinRM connectivity.
+                    if ($isLocal) {
+                        $allDisks = Get-WmiObject -Class Win32_LogicalDisk -Filter "DriveType=3" -ErrorAction Stop
+                    }
+                    else {
+                        $allDisks = Get-WmiObject -ComputerName $computer -Class Win32_LogicalDisk -Filter "DriveType=3" -ErrorAction Stop
+                    }
+                }
+                catch {
+                    if ($isLocal) {
+                        try {
+                            # Final local fallback that avoids CIM/WMI permissions/remoting.
+                            $allDisks = [System.IO.DriveInfo]::GetDrives() | Where-Object {
+                                $_.DriveType -eq [System.IO.DriveType]::Fixed -and $_.IsReady
+                            }
+                        }
+                        catch {
+                            Write-Error ("Failed to query '{0}': {1}" -f $computer, $_.Exception.Message)
+                            continue
+                        }
+                    }
+                    else {
+                        Write-Error ("Failed to query '{0}': {1}" -f $computer, $_.Exception.Message)
+                        continue
+                    }
+                }
+            }
+
+            foreach ($disk in $allDisks) {
+                $sizeBytes = $null
+                $freeBytes = $null
+                $driveId = $null
+                $label = $null
+
+                if ($disk -is [System.IO.DriveInfo]) {
+                    $sizeBytes = $disk.TotalSize
+                    $freeBytes = $disk.AvailableFreeSpace
+                    $driveId = $disk.Name.TrimEnd('\')
+                    $label = $disk.VolumeLabel
+                }
+                else {
+                    $sizeBytes = $disk.Size
+                    $freeBytes = $disk.FreeSpace
+                    $driveId = $disk.DeviceID
+                    $label = $disk.VolumeName
+                }
+
+                if (-not $sizeBytes -or $sizeBytes -le 0) {
+                    continue
+                }
+
+                $sizeGb = [math]::Round(($sizeBytes / 1GB), 2)
+                $freeGb = [math]::Round(($freeBytes / 1GB), 2)
+                $usedGb = [math]::Round((($sizeBytes - $freeBytes) / 1GB), 2)
+                $percentFree = [math]::Round((($freeBytes / $sizeBytes) * 100), 2)
+
+                $row = [pscustomobject]@{
+                    ComputerName = $computer
+                    Drive = $driveId
+                    Label = $label
+                    SizeGB = $sizeGb
+                    UsedGB = $usedGb
+                    FreeGB = $freeGb
+                    PercentFree = $percentFree
+                }
+
+                if ($PSBoundParameters.ContainsKey("BelowPercentFree")) {
+                    if ($percentFree -lt $BelowPercentFree) {
+                        $allResults += $row
+                    }
+                }
+                else {
+                    $allResults += $row
+                }
+            }
+        }
+    }
+
+    end {
+        $allResults
+    }
+}
+Get-FreeSpace
