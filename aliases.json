@@ -1,7 +1,12 @@
 {
   "parallel-port-test": {
     "Type": "Script",
-    "Name": "parallel-port-test",
-    "RelativePath": "scripts/parallel-port-test.ps1"
+    "RelativePath": "scripts/parallel-port-test.ps1",
+    "Name": "parallel-port-test"
+  },
+  "get-freespace": {
+    "Type": "Script",
+    "Name": "get-freespace",
+    "RelativePath": "scripts/get-freespace.ps1"
   }
 }

@@ -1,3 +1,18 @@
+[CmdletBinding()]
+param(
+    [Parameter(Mandatory = $false)]
+    [string[]]$ComputerName = @($env:COMPUTERNAME),
+
+    [Parameter(Mandatory = $false)]
+    [switch]$IncludeDeprecatedProtocols,
+
+    [Parameter(Mandatory = $false)]
+    [switch]$ShowOnlyEnabled,
+
+    [Parameter(Mandatory = $false)]
+    [switch]$PassThru
+)
+
 function Get-TlsVersionStatus {
 # Name: check-TLSversions
 # Tags: windows
@@ -252,11 +267,24 @@ else {
     $displayRows = $results
 }
 
-$tableColumns = @("ComputerName", "Protocol", "Client", "Server")
-$displayRows | Sort-Object ComputerName, Protocol | Format-Table -Property $tableColumns -AutoSize
-
+$sortedRows = $displayRows | Sort-Object ComputerName, Protocol
 if ($PassThru) {
-    $displayRows
+    $sortedRows
+}
+else {
+    $sortedRows | Format-Table -Property @("ComputerName", "Protocol", "Client", "Server") -AutoSize
 }
 }
 
+# When run directly as a script, execute the function with script-level parameters.
+# When dot-sourced/imported, only define the function.
+if ($MyInvocation.InvocationName -ne ".") {
+    $invokeParams = @{}
+    foreach ($key in @("ComputerName", "IncludeDeprecatedProtocols", "ShowOnlyEnabled", "PassThru")) {
+        if ($PSBoundParameters.ContainsKey($key)) {
+            $invokeParams[$key] = $PSBoundParameters[$key]
+        }
+    }
+
+    Get-TlsVersionStatus @invokeParams
+}

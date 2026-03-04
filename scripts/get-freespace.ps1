@@ -1,6 +1,19 @@
 # Name: get-freespace
 # Tags: windows
-# Saved: 2026-03-03T11:30:07.6506925+00:00
+# Saved: 2026-03-04T16:42:06.4935749+00:00
+param(
+    [Parameter()]
+    [Alias("CN", "Server", "Name")]
+    [string[]]$ComputerName = @($env:COMPUTERNAME),
+
+    [Parameter()]
+    [ValidateRange(0, 100)]
+    [int]$BelowPercentFree,
+
+    [Parameter()]
+    [switch]$PassThru
+)
+
 function Get-FreeSpace {
     <#
     .SYNOPSIS
@@ -136,6 +149,31 @@ function Get-FreeSpace {
 
     end {
         $allResults
+    }
+}
+
+if ($MyInvocation.InvocationName -ne ".") {
+    $invokeParams = @{
+        ComputerName = $ComputerName
+    }
+
+    if ($PSBoundParameters.ContainsKey("BelowPercentFree")) {
+        $invokeParams.BelowPercentFree = $BelowPercentFree
+    }
+
+    $results = @(Get-FreeSpace @invokeParams)
+
+    if (-not $results -or $results.Count -eq 0) {
+        Write-Warning "No fixed drives found, or no drives matched the selected filter."
+    }
+    else {
+        $results |
+            Sort-Object ComputerName, Drive |
+            Format-Table ComputerName, Drive, Label, SizeGB, UsedGB, FreeGB, PercentFree -AutoSize
+    }
+
+    if ($PassThru) {
+        $results
     }
 }
 

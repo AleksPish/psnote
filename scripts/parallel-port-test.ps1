@@ -366,5 +366,16 @@ function Invoke-ParallelPortTest {
     return $sortedResults
 }
 
-$null = Invoke-ParallelPortTest @PSBoundParameters
+if ($MyInvocation.InvocationName -ne ".") {
+    $invokeParams = @{
+        Ports = $Ports
+        IpRanges = $IpRanges
+        TimeoutMs = $TimeoutMs
+        MaxConcurrency = $MaxConcurrency
+        OutputPath = $OutputPath
+        NoCsvExport = $NoCsvExport
+    }
+
+    $null = Invoke-ParallelPortTest @invokeParams
+}
 
