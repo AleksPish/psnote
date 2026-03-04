@@ -1,3 +1,4 @@
+function Set-RdsCertificates {
 # Name: update-rdscerts
 # Tags: windows,remotedesktop,certs
 # Saved: 2026-03-03T15:00:16.5346886+00:00
@@ -190,5 +191,6 @@ foreach ($role in $Roles) {
   catch {
     Write-Error ("Failed to update role '{0}': {1}" -f $role, $_.Exception.Message)
   }
+}
 }
 

@@ -1,6 +1,37 @@
+function Get-ServiceAccountsReport {
 # Name: get-serviceaccounts
 # Tags: windows,service
 # Saved: 2026-03-03T11:58:52.2421771+00:00
+<#
+.SYNOPSIS
+Reports Windows service logon accounts on a target computer.
+
+.DESCRIPTION
+Collects service account assignments, supports filtering to domain-style
+accounts, optionally includes disabled services, and prints summary statistics.
+
+.PARAMETER ComputerName
+Target computer name. Defaults to the local computer.
+
+.PARAMETER OnlyDomainAccounts
+Shows only services running as domain or custom accounts.
+
+.PARAMETER IncludeDisabledServices
+Includes services with startup type Disabled.
+
+.PARAMETER PassThru
+Returns service account detail objects.
+
+.EXAMPLE
+Get-ServiceAccountsReport -ComputerName SRV01
+
+.EXAMPLE
+Get-ServiceAccountsReport -ComputerName SRV01 -OnlyDomainAccounts -PassThru
+
+.OUTPUTS
+PSCustomObject
+#>
+[OutputType([PSCustomObject])]
 [CmdletBinding()]
 param(
     [Parameter(Mandatory = $false)]
@@ -130,5 +161,6 @@ $output |
 
 if ($PassThru) {
     $output
+}
 }
 

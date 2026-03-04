@@ -1,6 +1,49 @@
+function Get-VSphereResourceUsage {
 # Name: vsphere-resourceusage
 # Tags: powercli,vmware
 # Saved: 2026-03-03T19:34:22.9966380+00:00
+<#
+.SYNOPSIS
+Builds vSphere cluster capacity and N+1 headroom report data.
+
+.DESCRIPTION
+Connects to vCenter, evaluates host and VM CPU/memory usage for either a single
+cluster or all clusters, and optionally exports summary/host detail CSV files.
+
+.PARAMETER VCenter
+vCenter Server hostname or FQDN.
+
+.PARAMETER ClusterName
+Optional cluster name. If omitted, all clusters are evaluated.
+
+.PARAMETER Credential
+Credential for vCenter connection.
+
+.PARAMETER PassThru
+Returns summary and host-detail objects.
+
+.PARAMETER SummaryCsvPath
+Optional path to export summary rows as CSV.
+
+.PARAMETER HostCsvPath
+Optional path to export per-host details as CSV.
+
+.PARAMETER PlannedVmCpu
+Additional planned powered-on vCPU count for projection.
+
+.PARAMETER PlannedVmMemoryGB
+Additional planned powered-on memory (GB) for projection.
+
+.EXAMPLE
+Get-VSphereResourceUsage -VCenter vc01.contoso.com -ClusterName Prod-01 -PassThru
+
+.EXAMPLE
+Get-VSphereResourceUsage -VCenter vc01.contoso.com -SummaryCsvPath C:\Temp\summary.csv -HostCsvPath C:\Temp\hosts.csv
+
+.OUTPUTS
+PSCustomObject
+#>
+[OutputType([PSCustomObject])]
 [CmdletBinding()]
 param(
   [Parameter()]
@@ -271,5 +314,6 @@ finally {
   if ($connection) {
     Disconnect-VIServer -Server $connection -Confirm:$false | Out-Null
   }
+}
 }
 

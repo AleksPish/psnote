@@ -1,6 +1,50 @@
+function Invoke-BackupEsxi {
 # Name: backup-esxi
 # Tags: powercli,vmware
 # Saved: 2026-03-03T15:59:51.3016154+00:00
+<#
+.SYNOPSIS
+Backs up ESXi host configuration through vCenter or direct host connection.
+
+.DESCRIPTION
+Connects to either a vCenter Server or a single ESXi host and runs
+Get-VMHostFirmware -BackupConfiguration for one or more hosts.
+If key connection inputs are omitted, interactive prompts are used.
+
+.PARAMETER VCenter
+vCenter Server hostname or FQDN used when not running direct-host mode.
+
+.PARAMETER DestinationPath
+Directory where host backup bundles are written.
+
+.PARAMETER BackupSingleHost
+Restricts backup scope to one host.
+
+.PARAMETER VMHostName
+Host name to back up when -BackupSingleHost is used.
+
+.PARAMETER BackupFromHost
+Connects directly to a standalone ESXi host instead of vCenter.
+
+.PARAMETER EsxiHost
+ESXi host hostname or FQDN used with -BackupFromHost.
+
+.PARAMETER PassThru
+Returns detailed per-host backup result objects.
+
+.PARAMETER SkipCertificatePrompt
+Sets PowerCLI invalid certificate action to Ignore for the current session.
+
+.EXAMPLE
+Invoke-BackupEsxi -VCenter vc01.contoso.com -DestinationPath C:\Backups\ESXi
+
+.EXAMPLE
+Invoke-BackupEsxi -BackupFromHost -EsxiHost esx01.contoso.com -PassThru
+
+.OUTPUTS
+PSCustomObject
+#>
+[OutputType([PSCustomObject])]
 [CmdletBinding()]
 param(
   [Parameter()]
@@ -214,5 +258,6 @@ finally {
   if ($connection) {
     Disconnect-VIServer -Server $connection -Confirm:$false | Out-Null
   }
+}
 }
 

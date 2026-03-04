@@ -150,9 +150,3 @@ function Remove-Certificate {
   }
 }
 
-$isDotSourced = $MyInvocation.InvocationName -eq '.'
-if (-not $isDotSourced) {
-  $interactiveThumbprint = Read-Host 'Enter the certificate thumbprint for the certificate to delete'
-  Remove-Certificate -Thumbprint $interactiveThumbprint -UseActiveDirectory
-}
-

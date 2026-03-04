@@ -1,6 +1,43 @@
+function Get-InstalledUpdatesReport {
 # Name: get-updatesinstalled
 # Tags: windows,updates
 # Saved: 2026-03-03T12:07:57.7554955+00:00
+<#
+.SYNOPSIS
+Retrieves installed Windows updates from a local or remote computer.
+
+.DESCRIPTION
+Collects installed update history using CIM/WMI with local fallback paths,
+supports date/result limiting, optional CSV export, and passthrough objects.
+
+.PARAMETER ComputerName
+Target computer name. Defaults to the local computer.
+
+.PARAMETER LastDays
+Returns only updates installed in the last N days.
+
+.PARAMETER MaxResults
+Limits the number of returned updates after sorting newest first.
+
+.PARAMETER ExportCsv
+Exports output to CSV.
+
+.PARAMETER ExportPath
+CSV path used when -ExportCsv is specified.
+
+.PARAMETER PassThru
+Returns update objects.
+
+.EXAMPLE
+Get-InstalledUpdatesReport -ComputerName SRV01 -LastDays 30
+
+.EXAMPLE
+Get-InstalledUpdatesReport -ComputerName SRV01 -ExportCsv -ExportPath C:\Temp\updates.csv -PassThru
+
+.OUTPUTS
+PSCustomObject
+#>
+[OutputType([PSCustomObject])]
 [CmdletBinding()]
 param(
     [Parameter(Mandatory = $false)]
@@ -168,5 +205,6 @@ if ($ExportCsv) {
 
 if ($PassThru) {
     $updates
+}
 }
 

@@ -84,11 +84,3 @@ function Remove-IdenticalFolders {
   $results
 }
 
-$isDotSourced = $MyInvocation.InvocationName -eq '.'
-if (-not $isDotSourced) {
-  $referencePath = Read-Host -Prompt 'Enter directory to get folder names from'
-  $targetPath = Read-Host -Prompt 'Enter folder to remove folders from'
-
-  Remove-IdenticalFolders -ReferencePath $referencePath -TargetPath $targetPath -Confirm
-}
-

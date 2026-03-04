@@ -1,3 +1,4 @@
+function Export-PfxCertificateMaterial {
 # Name: extract-pfxcertificate
 # Tags: certs
 # Saved: 2026-03-03T19:50:32.8377720+00:00
@@ -235,5 +236,6 @@ finally {
     Remove-Item Env:OPENSSL_PFX_PASS -ErrorAction SilentlyContinue
   }
   $plainPassword = $null
+}
 }
 

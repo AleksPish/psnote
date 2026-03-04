@@ -1,3 +1,4 @@
+function Get-ListeningProcessesReport {
 # Name: get-listeningprocesses
 # Tags: windows,network
 # Saved: 2026-03-03T11:38:42.1963592+00:00
@@ -100,4 +101,5 @@ if ($Export) {
 }
 
 $output
+}
 

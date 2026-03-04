@@ -1,3 +1,4 @@
+function Set-DnsClientServerAddressesBulk {
 # Name: change-DNSClientServerAddresses
 # Tags: windows
 # Saved: 2026-03-03T10:42:40.3859605+00:00
@@ -7,11 +8,24 @@
 #\-----------------------------------/#
 #######################################
 <#
-.Synopsis
-   Script to change DNS of multiple servers
+.SYNOPSIS
+Changes DNS server addresses on active network adapters across multiple servers.
+
+.DESCRIPTION
+Prompts for DNS server IPs, validates input, and updates active hardware
+network adapters on each target server via PowerShell remoting.
+
+.PARAMETER Servers
+Target server names. If omitted, values from $scriptServers are used.
+
 .EXAMPLE
-   .\Change-DNSClientServerAddresses.ps1 -Servers @("Server01","Server02")
+Set-DnsClientServerAddressesBulk -Servers @('Server01','Server02')
+
+.OUTPUTS
+PSCustomObject
 #>
+[OutputType([PSCustomObject])]
+[CmdletBinding(SupportsShouldProcess = $true, ConfirmImpact = 'Medium')]
 param(
     [Parameter(Mandatory = $false)]
     [string[]]$Servers
@@ -54,6 +68,10 @@ if ($invalidDnsEntries) {
 }
 
 foreach ($server in $Servers) {
+    if (-not $PSCmdlet.ShouldProcess($server, "Set DNS client server addresses")) {
+        continue
+    }
+
     Invoke-Command -ComputerName $server -ScriptBlock {
         param([string[]]$DnsServerAddresses)
 
@@ -71,5 +89,12 @@ foreach ($server in $Servers) {
     } -ArgumentList (,$dnsServers) -ErrorAction Stop
 
     Write-Host ("Updated DNS settings on {0} to: {1}" -f $server, ($dnsServers -join ", "))
+
+    [pscustomobject]@{
+        ComputerName = $server
+        DnsServers   = ($dnsServers -join ", ")
+        Updated      = $true
+    }
+}
 }
 

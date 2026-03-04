@@ -1,3 +1,4 @@
+function Invoke-IpScanner {
 # Name: ip-scanner
 # Tags: network
 # Saved: 2026-03-03T12:36:57.9202333+00:00
@@ -209,5 +210,6 @@ else {
             Select-Object IP, RoundTripMs, DNS, MAC |
             Format-Table -AutoSize
     }
+}
 }
 

@@ -130,8 +130,3 @@ function Get-SqlOdbcDriverLocationStatus {
   }
 }
 
-$isDotSourced = $MyInvocation.InvocationName -eq '.'
-if (-not $isDotSourced) {
-  Get-SqlOdbcDriverLocationStatus -UseActiveDirectory
-}
-

@@ -1,6 +1,40 @@
+function Get-VSphereMountedIso {
 # Name: find-mounted-ISO-vsphere
 # Tags: powercli
 # Saved: 2026-03-03T11:13:41.9614418+00:00
+<#
+.SYNOPSIS
+Lists VMs with connected ISO media in a vSphere environment.
+
+.DESCRIPTION
+Connects to a vCenter Server, inspects VM CD/DVD devices, and returns mounted
+ISO information filtered by an optional wildcard pattern.
+
+.PARAMETER VIServer
+vCenter Server name to query.
+
+.PARAMETER IsoPattern
+Wildcard pattern applied to ISO path values.
+
+.PARAMETER Credential
+Optional credential for Connect-VIServer.
+
+.PARAMETER InvalidCertificateAction
+PowerCLI certificate handling for this session.
+
+.PARAMETER PassThru
+Returns matching objects in addition to formatted table output.
+
+.EXAMPLE
+Get-VSphereMountedIso -VIServer vc01.contoso.com
+
+.EXAMPLE
+Get-VSphereMountedIso -VIServer vc01.contoso.com -IsoPattern '*windows*' -PassThru
+
+.OUTPUTS
+PSCustomObject
+#>
+[OutputType([PSCustomObject])]
 [CmdletBinding()]
 param(
     [Parameter(Mandatory = $true)]
@@ -78,5 +112,6 @@ finally {
     if ($connectedHere) {
         Disconnect-VIServer -Server $VIServer -Confirm:$false | Out-Null
     }
+}
 }
 

@@ -1,6 +1,37 @@
+function Get-TlsVersionStatus {
 # Name: check-TLSversions
 # Tags: windows
 # Saved: 2026-03-03T10:57:20.8159408+00:00
+<#
+.SYNOPSIS
+Reports TLS/SSL protocol enablement status on one or more Windows computers.
+
+.DESCRIPTION
+Evaluates SCHANNEL protocol registry configuration for client and server roles.
+When explicit values are missing, status is inferred from OS build defaults.
+
+.PARAMETER ComputerName
+Target computer names. Defaults to the local computer.
+
+.PARAMETER IncludeDeprecatedProtocols
+Includes SSL 2.0 and SSL 3.0 in the report.
+
+.PARAMETER ShowOnlyEnabled
+Shows only rows where client or server protocol state is enabled.
+
+.PARAMETER PassThru
+Returns result objects in addition to formatted table output.
+
+.EXAMPLE
+Get-TlsVersionStatus -ComputerName SRV01,SRV02
+
+.EXAMPLE
+Get-TlsVersionStatus -ComputerName SRV01 -IncludeDeprecatedProtocols -ShowOnlyEnabled
+
+.OUTPUTS
+PSCustomObject
+#>
+[OutputType([PSCustomObject])]
 [CmdletBinding()]
 param(
     [Parameter(Mandatory = $false)]
@@ -226,5 +257,6 @@ $displayRows | Sort-Object ComputerName, Protocol | Format-Table -Property $tabl
 
 if ($PassThru) {
     $displayRows
+}
 }
 

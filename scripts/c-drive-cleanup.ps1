@@ -1,6 +1,40 @@
+function Invoke-CDriveCleanup {
 # Name: c-drive-cleanup
 # Tags: windows
 # Saved: 2026-03-03T10:27:05.4680641+00:00
+<#
+.SYNOPSIS
+Performs common C: drive cleanup tasks and reports space reclaimed.
+
+.DESCRIPTION
+Runs a curated set of cleanup actions for temporary folders and update cache
+locations, writes a transcript and CSV audit output, and supports WhatIf/Confirm.
+
+.PARAMETER DaysToDelete
+Age threshold in days for tasks that remove only older files.
+
+.PARAMETER TranscriptPath
+Path for transcript logging.
+
+.PARAMETER AuditCsvPath
+Path for audit CSV output containing cleanup results.
+
+.PARAMETER IncludeCleanMgr
+Runs legacy CleanMgr (if available) as part of cleanup.
+
+.PARAMETER IncludeSccmCacheShrink
+Attempts to reduce Configuration Manager client cache size.
+
+.EXAMPLE
+Invoke-CDriveCleanup -DaysToDelete 30 -WhatIf
+
+.EXAMPLE
+Invoke-CDriveCleanup -IncludeCleanMgr -IncludeSccmCacheShrink
+
+.OUTPUTS
+PSCustomObject
+#>
+[OutputType([PSCustomObject])]
 [CmdletBinding(SupportsShouldProcess = $true, ConfirmImpact = 'High')]
 param(
     [Parameter(Mandatory = $false)]
@@ -380,4 +414,5 @@ if ($PSBoundParameters.ContainsKey('Confirm')) {
 }
 
 Start-CleanupV2 @invokeParams
+}
 

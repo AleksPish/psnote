@@ -2,6 +2,30 @@
 # Tags: windows
 # Saved: 2026-03-03T11:30:07.6506925+00:00
 function Get-FreeSpace {
+    <#
+    .SYNOPSIS
+    Reports fixed-disk free space on local or remote Windows computers.
+
+    .DESCRIPTION
+    Queries logical disks (DriveType=3) using CIM/WMI with local fallbacks and
+    returns size and utilization details per drive.
+
+    .PARAMETER ComputerName
+    One or more target computer names. Defaults to the local computer.
+
+    .PARAMETER BelowPercentFree
+    Optional threshold to return only drives with free space below this percent.
+
+    .EXAMPLE
+    Get-FreeSpace -ComputerName SRV01,SRV02
+
+    .EXAMPLE
+    Get-FreeSpace -ComputerName SRV01 -BelowPercentFree 15
+
+    .OUTPUTS
+    PSCustomObject
+    #>
+    [OutputType([PSCustomObject])]
     [CmdletBinding()]
     param(
         [Parameter(ValueFromPipeline = $true, ValueFromPipelineByPropertyName = $true)]
@@ -114,4 +138,4 @@ function Get-FreeSpace {
         $allResults
     }
 }
-Get-FreeSpace
+

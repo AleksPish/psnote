@@ -1,6 +1,46 @@
+function Search-GpoText {
 # Name: GPOSearcherScript
 # Tags: windows,activedirectory
 # Saved: 2026-03-03T12:29:30.4335967+00:00
+<#
+.SYNOPSIS
+Searches Group Policy Object report XML text for a target string or regex.
+
+.DESCRIPTION
+Enumerates GPOs in a domain, inspects XML report text nodes, and displays
+matching GPOs with optional contextual match text output.
+
+.PARAMETER SearchText
+Literal text or regex pattern to search for.
+
+.PARAMETER DomainName
+AD DNS domain name to query.
+
+.PARAMETER UseRegex
+Treats SearchText as a regular expression.
+
+.PARAMETER MaxMatchesPerGpo
+Maximum number of match rows retained per GPO.
+
+.PARAMETER MaxLineLength
+Maximum preview text length for display.
+
+.PARAMETER DisplayMode
+Controls summary-only or detailed output.
+
+.PARAMETER PassThru
+Returns a result object containing Matches and Errors collections.
+
+.EXAMPLE
+Search-GpoText -SearchText 'RunAsPPL' -DomainName contoso.com
+
+.EXAMPLE
+Search-GpoText -SearchText '.*TLS.*' -UseRegex -DisplayMode WithText -PassThru
+
+.OUTPUTS
+PSCustomObject
+#>
+[OutputType([PSCustomObject])]
 [CmdletBinding()]
 param(
     [Parameter(Mandatory = $false)]
@@ -201,5 +241,6 @@ if ($PassThru) {
         Matches = $results
         Errors = $errors
     }
+}
 }
 

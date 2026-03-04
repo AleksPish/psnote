@@ -1,1 +1,7 @@
-{}
+{
+  "parallel-port-test": {
+    "Type": "Script",
+    "Name": "parallel-port-test",
+    "RelativePath": "scripts/parallel-port-test.ps1"
+  }
+}
