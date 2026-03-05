@@ -42,6 +42,10 @@ function Read-NonEmptyInput {
     [string]$Prompt
   )
 
+  if ([Console]::IsInputRedirected) {
+    throw "Interactive input is not available. Provide required parameters instead of prompting for '$Prompt'."
+  }
+
   while ($true) {
     $value = Read-Host -Prompt $Prompt
     if (-not [string]::IsNullOrWhiteSpace($value)) {
@@ -194,3 +198,8 @@ foreach ($role in $Roles) {
 }
 }
 
+# When run directly as a script, execute the function.
+# When dot-sourced/imported, only define the function.
+if ($MyInvocation.InvocationName -ne ".") {
+    Set-RdsCertificates
+}

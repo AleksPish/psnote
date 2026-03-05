@@ -55,3 +55,9 @@ if (-not $PSCmdlet.ShouldProcess($KeyPath, "Reset SSH private key ACL for $Ident
     Updated  = $true
 }
 }
+
+# When run directly as a script, execute the function.
+# When dot-sourced/imported, only define the function.
+if ($MyInvocation.InvocationName -ne ".") {
+    Reset-SshKeyPermissions
+}

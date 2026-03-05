@@ -1,8 +1,6 @@
 # Name: get-odbcdriverlocation
 # Tags: SQL
 # Saved: 2026-03-03T14:22:15.6247953+00:00
-Set-StrictMode -Version Latest
-
 function Get-SqlOdbcDriverLocationStatus {
   <#
   .SYNOPSIS
@@ -50,6 +48,8 @@ function Get-SqlOdbcDriverLocationStatus {
 
     [switch]$SkipConnectivityTest
   )
+
+  Set-StrictMode -Version Latest
 
   begin {
     $targets = New-Object System.Collections.Generic.List[string]
@@ -130,3 +130,8 @@ function Get-SqlOdbcDriverLocationStatus {
   }
 }
 
+# When run directly as a script, execute the function.
+# When dot-sourced/imported, only define the function.
+if ($MyInvocation.InvocationName -ne ".") {
+    Get-SqlOdbcDriverLocationStatus
+}

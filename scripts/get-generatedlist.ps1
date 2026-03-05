@@ -1,8 +1,6 @@
 # Name: get-generatedlist
 # Tags: tools
 # Saved: 2026-03-03T20:01:28.1090882+00:00
-Set-StrictMode -Version Latest
-
 function Get-GeneratedList {
   <#
   .SYNOPSIS
@@ -82,6 +80,8 @@ function Get-GeneratedList {
     [Parameter()]
     [switch]$CopyToClipboard
   )
+
+  Set-StrictMode -Version Latest
 
   function Get-NumericRange {
     param(
@@ -202,3 +202,8 @@ function Get-GeneratedList {
   $output
 }
 
+# When run directly as a script, execute the function.
+# When dot-sourced/imported, only define the function.
+if ($MyInvocation.InvocationName -ne ".") {
+    Get-GeneratedList
+}

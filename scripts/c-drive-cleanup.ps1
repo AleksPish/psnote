@@ -416,3 +416,8 @@ if ($PSBoundParameters.ContainsKey('Confirm')) {
 Start-CleanupV2 @invokeParams
 }
 
+# When run directly as a script, execute the function.
+# When dot-sourced/imported, only define the function.
+if ($MyInvocation.InvocationName -ne ".") {
+    Invoke-CDriveCleanup
+}

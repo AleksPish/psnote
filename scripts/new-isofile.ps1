@@ -255,3 +255,8 @@ public class ISOFile
   }
 }
 
+# When run directly as a script, execute the function.
+# When dot-sourced/imported, only define the function.
+if ($MyInvocation.InvocationName -ne ".") {
+    New-IsoFile
+}

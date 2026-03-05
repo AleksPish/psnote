@@ -1,4 +1,4 @@
-function Invoke-BackupEsxi {
+function backup-esxi {
 # Name: backup-esxi
 # Tags: powercli,vmware
 # Saved: 2026-03-03T15:59:51.3016154+00:00
@@ -36,10 +36,10 @@ Returns detailed per-host backup result objects.
 Sets PowerCLI invalid certificate action to Ignore for the current session.
 
 .EXAMPLE
-Invoke-BackupEsxi -VCenter vc01.contoso.com -DestinationPath C:\Backups\ESXi
+backup-esxi -VCenter vc01.contoso.com -DestinationPath C:\Backups\ESXi
 
 .EXAMPLE
-Invoke-BackupEsxi -BackupFromHost -EsxiHost esx01.contoso.com -PassThru
+backup-esxi -BackupFromHost -EsxiHost esx01.contoso.com -PassThru
 
 .OUTPUTS
 PSCustomObject
@@ -85,6 +85,10 @@ function Read-NonEmptyInput {
     [string]$Prompt
   )
 
+  if ([Console]::IsInputRedirected) {
+    throw "Interactive input is not available. Provide required parameters instead of prompting for '$Prompt'."
+  }
+
   while ($true) {
     $value = Read-Host -Prompt $Prompt
     if (-not [string]::IsNullOrWhiteSpace($value)) {
@@ -101,6 +105,10 @@ function Read-YesNo {
     [Parameter(Mandatory=$true)]
     [bool]$DefaultValue
   )
+
+  if ([Console]::IsInputRedirected) {
+    throw "Interactive input is not available. Provide parameters to avoid prompting for '$Prompt'."
+  }
 
   $defaultText = if ($DefaultValue) { 'Y' } else { 'N' }
   while ($true) {
@@ -261,3 +269,8 @@ finally {
 }
 }
 
+# When run directly as a script, execute the function.
+# When dot-sourced/imported, only define the function.
+if ($MyInvocation.InvocationName -ne ".") {
+    backup-esxi
+}

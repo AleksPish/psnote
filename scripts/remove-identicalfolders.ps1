@@ -1,8 +1,6 @@
 # Name: remove-identicalfolders
 # Tags: file
 # Saved: 2026-03-03T14:16:51.5112165+00:00
-Set-StrictMode -Version Latest
-
 function Remove-IdenticalFolders {
   <#
   .SYNOPSIS
@@ -38,6 +36,8 @@ function Remove-IdenticalFolders {
     [ValidateNotNullOrEmpty()]
     [string]$TargetPath
   )
+
+  Set-StrictMode -Version Latest
 
   $resolvedReference = Resolve-Path -LiteralPath $ReferencePath -ErrorAction Stop
   $resolvedTarget = Resolve-Path -LiteralPath $TargetPath -ErrorAction Stop
@@ -84,3 +84,8 @@ function Remove-IdenticalFolders {
   $results
 }
 
+# When run directly as a script, execute the function.
+# When dot-sourced/imported, only define the function.
+if ($MyInvocation.InvocationName -ne ".") {
+    Remove-IdenticalFolders
+}

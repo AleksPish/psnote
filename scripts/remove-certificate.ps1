@@ -1,8 +1,6 @@
 # Name: remove-certificate
 # Tags: certs
 # Saved: 2026-03-03T14:10:04.8150978+00:00
-Set-StrictMode -Version Latest
-
 function Remove-Certificate {
   <#
   .SYNOPSIS
@@ -51,6 +49,8 @@ function Remove-Certificate {
 
     [switch]$UseActiveDirectory
   )
+
+  Set-StrictMode -Version Latest
 
   begin {
     $normalizedThumbprint = ($Thumbprint -replace '\s', '').ToUpperInvariant()
@@ -150,3 +150,8 @@ function Remove-Certificate {
   }
 }
 
+# When run directly as a script, execute the function.
+# When dot-sourced/imported, only define the function.
+if ($MyInvocation.InvocationName -ne ".") {
+    Remove-Certificate
+}
